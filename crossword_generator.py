@@ -8,20 +8,16 @@ n = 15
 global_grid_version = 1
 
 
-def assign_grid_values(size: int):
-    assigned_grid = np.zeros((size, size)).tolist()
-    i = 1
-    for row in assigned_grid:
-        j = 1
-        for _ in row:
-            assigned_grid[i - 1][j - 1] = Cell(i, j)
-            j += 1
-        i += 1
-    return assigned_grid
+def create_blank_grid(size: int):
+    np_grid = np.zeros((size, size)).tolist()
+    for i in range(0, size):
+        for j in range(0, size):
+            np_grid[i][j] = Cell(i+1, j+1)
+    return np_grid
 
 
-black_x_word = assign_grid_values(n)
-white_x_word = assign_grid_values(n)
+black_x_word = create_blank_grid(n)
+white_x_word = create_blank_grid(n)
 
 
 def change_cell(grid: list, row: int, column: int, new_value: str):
@@ -83,9 +79,9 @@ def reset_grids(grids: list):
         for i in range(len(grid)):
             for j in range(len(grid[i])):
                 grid[i][j] = Cell(i, j)
-    add_word([black_x_word, white_x_word], "down", 9, 15, "bar?s")
+    add_word([black_x_word, white_x_word], "down", 10, 15, "fe?s")
     # bards --> bares "Tells a story"
-    add_word([black_x_word, white_x_word], "down", 10, 14, "bo?t")
+    add_word([black_x_word, white_x_word], "down", 9, 14, "sil?s")
     # bolt --> bout "idk"
     add_word([black_x_word, white_x_word], "down", 11, 13, "b?ot")
 
