@@ -1,5 +1,6 @@
 import numpy as np
 from x_word_cells import *
+import re
 # import tkinter as tk
 import csv
 
@@ -19,7 +20,8 @@ def assign_grid_values(size: int):
     return assigned_grid
 
 
-x_word = assign_grid_values(n)
+black_x_word = assign_grid_values(n)
+white_x_word = assign_grid_values(n)
 
 
 def change_cell(grid: list, row: int, column: int, new_value: str):
@@ -29,9 +31,7 @@ def change_cell(grid: list, row: int, column: int, new_value: str):
         opposite_cell = grid[len(grid) - row][len(grid) - column]
         opposite_cell.set_black()
     elif new_value == "?":
-        new_cell.se()
-        opposite_cell = grid[len(grid) - row][len(grid) - column]
-        opposite_cell.set_black()
+        new_cell.set_unknown()
     if new_value.isalpha():
         new_cell.set_letter(new_value)
     grid[row - 1][column - 1] = new_cell
@@ -54,36 +54,45 @@ def valid_word(grid: list, direction: str, start_row: int, start_col: int, word:
     if direction.lower() not in ['across', 'down']:
         raise ValueError("Invalid direction. Please use 'across' or 'down'.")
     if length > size or (
-            direction == "across" and length + zero_indexed_col > size) or (
+            direction == "across" and length + zero_indexed_col - 1 > size) or (
             direction == "down" and length + zero_indexed_row - 1 > size):
         raise OutOfBoundsError
     else:
         return True
 
 
-def add_word(grid: list, direction: str, start_row: int, start_col: int, word: str):
-    i = 0
-    try:
-        if not valid_word(grid,direction,start_row,start_col,word):
-            return
-        for _ in word:
-            if direction == "across":
-                change_cell(grid, start_row, start_col + i, word[i])
-                i += 1
-            elif direction == "down":
-                change_cell(grid, start_row + i, start_col, word[i])
-                i += 1
-        return grid
-    except OutOfBoundsError as e:
-        print("An Error Occurred: ", e.message)
+def add_word(grids: list, direction: str, start_row: int, start_col: int, word: str):
+    for grid in grids:
+        try:
+            if not valid_word(grid, direction, start_row, start_col, word):
+                return
+            i = 0
+            for _ in word:
+                if direction == "across":
+                    change_cell(grid, start_row, start_col + i, word[i])
+                    i += 1
+                elif direction == "down":
+                    change_cell(grid, start_row + i, start_col, word[i])
+                    i += 1
+        except OutOfBoundsError as e:
+            print("An Error Occurred: ", e.message)
 
 
-def reset_grid(grid):
-    i = 1
-    for row in grid:
-        j = 1
-        for _ in row:
-            grid[i - 1][j - 1] = Cell(i, j)
-            j += 1
-        i += 1
-    return grid
+def reset_grids(grids: list):
+    for grid in grids:
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                grid[i][j] = Cell(i, j)
+    add_word([black_x_word, white_x_word], "down", 9, 15, "bar?s")
+    # bards --> bares "Tells a story"
+    add_word([black_x_word, white_x_word], "down", 10, 14, "bo?t")
+    # bolt --> bout "idk"
+    add_word([black_x_word, white_x_word], "down", 11, 13, "b?ot")
+
+    add_word([black_x_word], "across", 12, 1, "###blackandblue")
+    add_word([white_x_word], "across", 12, 1, "###whiteandgold")
+    add_word([black_x_word, white_x_word], "across", 15, 14, "##")
+    add_word([black_x_word, white_x_word], "across", 14, 14, "##")
+
+
+reset_grids([black_x_word, white_x_word])

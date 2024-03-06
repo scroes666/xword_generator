@@ -20,6 +20,14 @@ class Cell:
         self.is_unknown = False
         self.value = letter
 
+    def set_unknown(self):
+        self.is_unknown = True
+        self.is_black = False
+        self.is_letter = False
+        self.value = "?"
+
+
+
     def add_word(self, grid, direction: str, word: str, location):
         pass
 
